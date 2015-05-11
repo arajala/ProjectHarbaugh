@@ -1,15 +1,22 @@
 #ifndef NEURONLAYER_H
 #define NEURONLAYER_H
 
-#include "../Common/Common.hpp"
-#include <string>
-#include <vector>
+#include "Neuron.hpp"
 
-class NeuronLayer_t {
-public:
-	uint64_t n_neurons;
+class NeuronLayer {
+	unsigned int n_neurons;
 	vector<Neuron> neurons;
-	NeuronLayer_t(uint64_t n, uint64_t inputs_per_neuron);
+	NeuronLayer() {}
+	void initialize(unsigned int n);
+	void apply(vector<float>* inputs);
+};
+
+class LSTMNeuronLayer {
+	unsigned int n_neurons;
+	vector<LSTMNeuron> neurons;
+	LSTMNeuronLayer();
+	void initialize(unsigned int n);
+	void apply(vector<float>* inputs);
 };
 
 #endif

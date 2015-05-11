@@ -1,21 +1,29 @@
 #ifndef NEURALNETWORK_H
 #define NEURALNETWORK_H
 
-#include "../Common/Common.hpp"
-#include <string>
-#include <vector>
+#include "NeuronLayer.hpp"
 
-class NeuralNetwork_t {
+struct LayerSetup {
+	unsigned int n_in_neurons;
+	unsigned int n_out_neurons;
+	unsigned int n_hid_layers;
+	unsigned int* n_hid_neurons;
+};
+
+struct BackConnections {
+	vector<pair<unsigned int, unsigned int>> connections;
+};
+
+class NeuralNetwork {
 private:
-	uint64_t n_inputs;
-	uint64_t n_outputs;
-	uint64_t n_hidden_layers;
-	uint64_t n_neurons_per_hidden_layer;
-	vector<NeuronLayer_t> layers;
+	unsigned int n_hidden_layers;
+	vector<NeuronLayer> layers;
+	map<pair<NeuronLayer*, NeuronLayer*>, NeuralWeightMap*> weight_map;
+	vector<pair<unsigned int, unsigned int>> back_connections;
 public:
-	NeuralNetwork_t();
-	vector<float> update(vector<float>& inputs);
-	inline float sigmoid(float activation, float response);
+	NeuralNetwork(LayerSetup layer_setup, BackConnections back_conns);
+	void update(vector<float>* inputs);
+	void propogate(NeuronLayer* next, NeuronLayer* prev);
 };
 
 #endif
