@@ -1,9 +1,5 @@
 #include "NeuralNetwork.hpp"
 
-NeuralNetwork::NeuralNetwork() {
-
-}
-
 NeuralNetwork::~NeuralNetwork() {
 	while (!neurons.empty()) {
 		Neuron* n = neurons.back();
