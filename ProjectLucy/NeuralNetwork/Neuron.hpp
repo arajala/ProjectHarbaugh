@@ -11,9 +11,11 @@
 #define NEURON_BINARY_THRESHOLD		0.5f	// Value on [0.0, 1.0] to trigger activation
 #define NEURON_BINARY_ACTIVATION	1.0f	// Value of activation signal once triggered
 
+class Neuron;
+
 class Synapse {
 public:
-	Synapse();
+	Synapse() {};
 	float weight;
 	Neuron* neuron;
 private:
@@ -25,9 +27,9 @@ public:
 	void apply(float input);
 	virtual void simulate();
 	virtual float get();
+	vector<Synapse> synapses;
 protected:
 	float potential;
-	vector<Synapse> synapses;
 };
 
 class LSTMNeuron : public Neuron {

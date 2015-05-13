@@ -111,15 +111,20 @@ void NeuralNetwork::connect_neurons(unsigned int neuron_0, unsigned int neuron_1
 }
 
 void NeuralNetwork::randomize_weights() {
-	default_random_engine generator;
+	// Create the seeded RNG
+	typedef chrono::system_clock clk;
+	clk::time_point tp = clk::now();
+	clk::duration dur = tp.time_since_epoch();
+	unsigned int time_seed = dur.count();
+	default_random_engine generator(time_seed);
 	uniform_real_distribution<float> distribution(NN_WEIGHT_MIN, NN_WEIGHT_MAX);
 
 	// Iterate through all neurons and their synapses
 	unsigned int n_neurons = neurons.size();
-	for (unsigned int in = 0; in < n_neurons; ++i) {
+	for (unsigned int in = 0; in < n_neurons; ++in) {
 		unsigned int n_synapses = neurons.at(in)->synapses.size();
 		for (unsigned int is = 0; is < n_synapses; ++is) {
-			neurons.at(in)->synapses.weight = distribution(generator);
+			neurons.at(in)->synapses.at(is).weight = distribution(generator);
 		}
 	}
 }
@@ -129,10 +134,10 @@ void NeuralNetwork::set_weights(vector<float>* weights) {
 
 	// Iterate through all neurons and their synapses
 	unsigned int n_neurons = neurons.size();
-	for (unsigned int in = 0; in < n_neurons; ++i) {
+	for (unsigned int in = 0; in < n_neurons; ++in) {
 		unsigned int n_synapses = neurons.at(in)->synapses.size();
 		for (unsigned int is = 0; is < n_synapses; ++is) {
-			neurons.at(in)->synapses.weight = weights->at(is);
+			neurons.at(in)->synapses.at(is).weight = weights->at(is);
 		}
 	}
 }
@@ -142,10 +147,10 @@ vector<float>* NeuralNetwork::get_weights() {
 
 	// Iterate through all neurons and their synapses
 	unsigned int n_neurons = neurons.size();
-	for (unsigned int in = 0; in < n_neurons; ++i) {
+	for (unsigned int in = 0; in < n_neurons; ++in) {
 		unsigned int n_synapses = neurons.at(in)->synapses.size();
 		for (unsigned int is = 0; is < n_synapses; ++is) {
-			float this_weight = neurons.at(in)->synapses.weight;
+			float this_weight = neurons.at(in)->synapses.at(is).weight;
 			weights->push_back(this_weight);
 		}
 	}
