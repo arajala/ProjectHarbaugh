@@ -1,29 +1,45 @@
-#ifndef NEURALNETWORK_H
-#define NEURALNETWORK_H
+#ifndef NEURALNETWORK_HPP
+#define NEURALNETWORK_HPP
 
-#include "NeuronLayer.hpp"
+#include "Neuron.hpp"
 
-struct LayerSetup {
-	unsigned int n_in_neurons;
-	unsigned int n_out_neurons;
-	unsigned int n_hid_layers;
-	unsigned int* n_hid_neurons;
-};
-
-struct BackConnections {
-	vector<pair<unsigned int, unsigned int>> connections;
-};
+#define NN_WEIGHT_MIN	0.0f
+#define NN_WEIGHT_MAX	1.0f
 
 class NeuralNetwork {
-private:
-	unsigned int n_hidden_layers;
-	vector<NeuronLayer> layers;
-	map<pair<NeuronLayer*, NeuronLayer*>, NeuralWeightMap*> weight_map;
-	vector<pair<unsigned int, unsigned int>> back_connections;
 public:
-	NeuralNetwork(LayerSetup layer_setup, BackConnections back_conns);
-	void update(vector<float>* inputs);
-	void propogate(NeuronLayer* next, NeuronLayer* prev);
+	// Network creation methods
+	NeuralNetwork();
+	~NeuralNetwork();
+	void init();
+
+	// Network usage methods
+	void apply(vector<float>* inputs);
+	void simulate();
+	vector<float>* get();
+
+	// Network construction methods
+	void add_layer(unsigned int n_neurons, unsigned int n_lstm_neurons);
+	void connect_layers(unsigned int layer_0, unsigned int layer_1);
+	void connect_neurons(unsigned int neuron_0, unsigned int neuron_1);
+
+	// Network tuning methods
+	void randomize_weights();
+	void set_weights(vector<float>* weights);
+	vector<float>* get_weights();	// return value must be deleted
+
+private:
+	// All neurons, packed into a flat structure
+	vector<Neuron*> neurons;
+
+	// Number of neurons in each layer
+	vector<unsigned int> neurons_per_layer;
+
+	// Number of synapse connections in the network
+	unsigned long int n_total_synapses;
+
+	// The current output state
+	vector<float> outputs;
 };
 
 #endif

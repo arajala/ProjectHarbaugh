@@ -1,27 +1,17 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef COMMON_HPP
+#define COMMON_HPP
 
 using namespace std;
 
 #include <cstdlib>
-#include <cstdint>
-#include <cstring>
+#include <cmath>
 #include <cassert>
-#include <iostream>
 #include <random>
+#include <iostream>
 #include <vector>
-#include <map>
 
-class FloatMatrix {
-private:
-	vector<vector<float>> data;
-public:
-	unsigned int nrows;
-	unsigned int ncols;
-	float at(unsigned int x, unsigned int y);
-	void resize(uint32_t)
-};
-
-float sigmoid(float x);
+inline float sigmoid(float x) {
+	return 1.0f / (1.0f + (float)exp(-(double)x));
+}
 
 #endif
