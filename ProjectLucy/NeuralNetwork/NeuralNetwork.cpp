@@ -8,7 +8,7 @@ NeuralNetwork::~NeuralNetwork() {
 	}
 }
 
-void NeuralNetwork::init() {
+void NeuralNetwork::initialize() {
 	outputs.resize(neurons_per_layer.back());
 }
 
@@ -73,13 +73,13 @@ void NeuralNetwork::add_layer(unsigned int n_neurons, unsigned int n_lstm_neuron
 
 void NeuralNetwork::connect_layers(unsigned int layer_0, unsigned int layer_1) {
 	// Get the index of the neuron at the start of layer 0
-	unsigned int i_layer_0_neuron;
+	unsigned int i_layer_0_neuron = 0;
 	for (unsigned int il = 0; il < layer_0; ++il) {
 		i_layer_0_neuron += neurons_per_layer.at(il);
 	}
 
 	// Get the index of the neuron at the start of layer 1
-	unsigned int i_layer_1_neuron;
+	unsigned int i_layer_1_neuron = 0;
 	for (unsigned int il = 0; il < layer_1; ++il) {
 		i_layer_1_neuron += neurons_per_layer.at(il);
 	}

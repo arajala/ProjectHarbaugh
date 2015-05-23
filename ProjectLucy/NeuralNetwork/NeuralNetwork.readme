@@ -1,0 +1,19 @@
+NeuralNetwork
+
+This code implements the structure of neural networks, including different
+types of neurons. The user must use the construction methods to add all of the
+desired layers and neurons, specify all of the connections between layers and/
+or individual neurons, optionally set or randomize the synapse weights, and
+then initialize the network. Once initialized, the code provides an interface
+to apply new input values to the network, run one simulation pass of the
+network, and get the output values of the network.
+
+General use case format:
+1. Create NeuralNetwork object
+2. Add all desired layers with add_layer()
+3. Connect all desired layers with connect_layers()
+4. Connect all desired individual neurons with connect_neurons()
+5. Initialize with initialize()
+6. Give inputs with apply()
+7. Calculate propogation in a loop with simulate()
+8. When desired, fetch outputs with get()

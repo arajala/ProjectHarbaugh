@@ -1,0 +1,9 @@
+Evolution
+
+This code implements the evolution/genetic algorithms used to train the neural
+networks implemented in ../NeuralNetworks. It interfaces with the set_weights()
+and get_weights()functions, and manages a system of files that store the weight
+vectors. It manages a setof concurrent networks with different weights, and
+handles the merging/breeding/mutation of weights to produce new networks. It
+provides an interface to the user to specify the goals of training, so the
+algorithm can score the networks and proceed.

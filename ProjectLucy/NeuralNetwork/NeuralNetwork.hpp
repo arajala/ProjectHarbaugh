@@ -13,7 +13,7 @@ public:
 	// Cleans up the neurons vector
 	~NeuralNetwork();
 	// Init must be called after construction, before calling simulate()
-	void init();
+	void initialize();
 
 	// === Network usage methods ===
 
@@ -26,8 +26,15 @@ public:
 
 	// === Network construction methods ===
 
+	// Adds a new layer with a specified number of neurons
+	// Note that n_lstm_neurons adds 4*n_lstm_neurons to the network
 	void add_layer(unsigned int n_neurons, unsigned int n_lstm_neurons);
+	// Fully forward-connects any two layers of the network
+	// (Connects layer_0 to layer_1)
 	void connect_layers(unsigned int layer_0, unsigned int layer_1);
+	// Forward connects any two neurons in the network, specified by their ID
+	// ID numbers start at 0 and increment for every neuron added to the network
+	// User should maintain external drawing of network to know ID numbers
 	void connect_neurons(unsigned int neuron_0, unsigned int neuron_1);
 
 	// === Network tuning methods ===
