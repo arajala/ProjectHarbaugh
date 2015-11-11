@@ -4,14 +4,14 @@ using namespace std;
 
 bool Pong::connectPlayer1(int port) {
 
-	struct sockaddr_in serv_addr;
-	struct hostent* server;
+	sockaddr_in serv_addr;
+	hostent* server;
 
 	// Create the socket
 	player_1_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (player_1_fd < 0) {
 		cout << "E: Failed to create socket" << endl;
-		return false
+		return false;
 	}
 
 	// Populate server information
@@ -36,8 +36,8 @@ bool Pong::connectPlayer1(int port) {
 
 bool Pong::connectPlayer2(int port) {
 
-	struct sockaddr_in serv_addr;
-	struct hostent* server;
+	sockaddr_in serv_addr;
+	hostent* server;
 
 	// Create the socket
 	player_2_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -62,26 +62,30 @@ bool Pong::connectPlayer2(int port) {
 		cout << "E: Failed to connect" << endl;
 		return false;
 	}
+
+	return true;
 }
 
 void Pong::sendPlayer1Packet() {
 
 	// Populate the connect test buffer
 	char send_buf[16];
-	char recv_buf[1];
-	send_buf[0] = 'T';
+	int n_bytes;
+	// char recv_buf[1];
+	// send_buf[0] = 'T';
+	// send_buf[1] = '1';
 
-	// Test connection
-	int n_bytes = write(player_1_fd, send_buf, 1);
-	if (n_bytes < 0) {
-		cout << "E: Failed test write, player 1 disconnected" << endl;
-		exit(EXIT_FAILURE);
-	}
-	n_bytes = read(player_1_fd, recv_buf, 1);
-	if (recv_buf[0] != 'P') {
-		cout << "E: Failed test read, player 1 disconnected" << endl;
-		exit(EXIT_FAILURE);
-	}
+	// // Test connection
+	// int n_bytes = write(player_1_fd, send_buf, 2);
+	// if (n_bytes < 0) {
+	// 	cout << "E: Failed test write, player 1 disconnected" << endl;
+	// 	exit(EXIT_FAILURE);
+	// }
+	// n_bytes = read(player_1_fd, recv_buf, 1);
+	// if (recv_buf[0] != 'P') {
+	// 	cout << "E: Failed test read, player 1 disconnected" << endl;
+	// 	exit(EXIT_FAILURE);
+	// }
 
 	// Prepare trimmed data
 	unsigned char tr_p1_score = (unsigned char)player_1_score;
@@ -105,6 +109,7 @@ void Pong::sendPlayer1Packet() {
 	send_buf[8] = (char)(tr_p2_pos & 0xFF);
 	send_buf[9] = (char)((tr_p2_pos >> 8) & 0xFF);
 	send_buf[10] = (char)(tr_p1_hit);
+	send_buf[11] = (char)1;
 
 	// Send the data
 	n_bytes = write(player_1_fd, send_buf, strlen(send_buf));
@@ -118,20 +123,22 @@ void Pong::sendPlayer2Packet() {
 
 	// Populate the connect test buffer
 	char send_buf[16];
-	char recv_buf[1];
-	send_buf[0] = 'T';
+	int n_bytes;
+	// char recv_buf[1];
+	// send_buf[0] = 'T';
+	// send_buf[1] = '2';
 
-	// Test connection
-	int n_bytes = write(player_2_fd, send_buf, 1);
-	if (n_bytes < 0) {
-		cout << "E: Failed test write, player 2 disconnected" << endl;
-		exit(EXIT_FAILURE);
-	}
-	n_bytes = read(player_2_fd, recv_buf, 1);
-	if (recv_buf[0] != 'P') {
-		cout << "E: Failed test read, player 2 disconnected" << endl;
-		exit(EXIT_FAILURE);
-	}
+	// // Test connection
+	// int n_bytes = write(player_2_fd, send_buf, 2);
+	// if (n_bytes < 0) {
+	// 	cout << "E: Failed test write, player 2 disconnected" << endl;
+	// 	exit(EXIT_FAILURE);
+	// }
+	// n_bytes = read(player_2_fd, recv_buf, 1);
+	// if (recv_buf[0] != 'P') {
+	// 	cout << "E: Failed test read, player 2 disconnected" << endl;
+	// 	exit(EXIT_FAILURE);
+	// }
 
 	// Prepare trimmed data
 	unsigned char tr_p1_score = (unsigned char)player_1_score;
@@ -155,6 +162,7 @@ void Pong::sendPlayer2Packet() {
 	send_buf[8] = (char)(tr_p2_pos & 0xFF);
 	send_buf[9] = (char)((tr_p2_pos >> 8) & 0xFF);
 	send_buf[10] = (char)(tr_p2_hit);
+	send_buf[11] = (char)2;
 
 	// Send the data
 	n_bytes = write(player_2_fd, send_buf, strlen(send_buf));
@@ -199,7 +207,7 @@ void Pong::update() {
 	if (new_x < 0) {
 		if ((new_y >= player_1_position - PADDLE_RADIUS) &&
 			(new_y <= player_1_position + PADDLE_RADIUS)) {
-			if (ball_angle > 0) {
+			if (ball_angle > 0.0) {
 				double axis_diff = ball_angle - 90.0;
 				ball_angle = 90.0 - axis_diff;
 			} else {
@@ -214,14 +222,19 @@ void Pong::update() {
 			player_2_score += 1;
 			new_x = BOARD_WIDTH / 2.0;
 			new_y = BOARD_HEIGHT / 2.0;
+			cout << endl;
+			cout << "Player 1: " << player_1_score << endl;
+			cout << "Player 2: " << player_2_score << endl;
 		}
 	} else if (new_x >= BOARD_WIDTH) {
 		if ((new_y >= player_2_position - PADDLE_RADIUS) &&
 			(new_y <= player_2_position + PADDLE_RADIUS)) {
-			if (ball_angle > 0) {
-				double axis_diff = ball_angle - 0.0;
+			if (ball_angle > 0.0) {
+				double axis_diff = 90.0 - ball_angle;
+				ball_angle = 90.0 + axis_diff;
 			} else {
-
+				double axis_diff = -90.0 - ball_angle;
+				ball_angle = -90.0 + axis_diff;
 			}
 			int x_diff = new_x - BOARD_WIDTH;
 			new_x = BOARD_WIDTH - x_diff;
@@ -231,6 +244,8 @@ void Pong::update() {
 			player_1_score += 1;
 			new_x = BOARD_WIDTH / 2.0;
 			new_y = BOARD_HEIGHT / 2.0;
+			cout << "Player 1: " << player_1_score << endl;
+			cout << "Player 2: " << player_2_score << endl;
 		}
 	}
 
@@ -241,6 +256,59 @@ void Pong::update() {
 
 bool Pong::isFinished() {
 	return (player_1_score >= FINAL_SCORE) || (player_2_score >= FINAL_SCORE);
+}
+
+void* Pong::listenToPlayer1(void* arg) {
+
+	unsigned char recv_buf[16];
+	int n_bytes;
+	pthread_mutex_init(&lock, NULL);
+
+	while (player_1_fd) {
+		n_bytes = read(player_1_fd, recv_buf, 16);
+		if (n_bytes < 1) {
+			cout << "E: Did not receive data from player 1" << endl;
+			exit(EXIT_FAILURE);
+		}
+		if (recv_buf[0] == MOVE_UP) {
+			if (player_1_position < BOARD_HEIGHT-1) {
+				++player_1_position;
+			}
+		} else if (recv_buf[0] == MOVE_DOWN) {
+			if (player_1_position > 0) {
+				--player_1_position;
+			}
+		}
+		recv_buf[0] = MOVE_NOWHERE;
+	}
+
+	return NULL;
+}
+
+void* Pong::listenToPlayer2(void* arg) {
+
+	unsigned char recv_buf[16];
+	int n_bytes;
+
+	while (player_2_fd) {
+		n_bytes = read(player_2_fd, recv_buf, 16);
+		if (n_bytes < 1) {
+			cout << "E: Did not receive data from player 2" << endl;
+			exit(EXIT_FAILURE);
+		}
+		if (recv_buf[0] == MOVE_UP) {
+			if (player_2_position < BOARD_HEIGHT-1) {
+				++player_2_position;
+			}
+		} else if (recv_buf[0] == MOVE_DOWN) {
+			if (player_2_position > 0) {
+				--player_2_position;
+			}
+		}
+		recv_buf[0] = MOVE_NOWHERE;
+	}
+
+	return NULL;
 }
 
 int main(int argc, char** argv) {
@@ -270,14 +338,19 @@ int main(int argc, char** argv) {
 	}
 	cout << "PLAYER 2 CONNECTED" << endl;
 
+	// Start listening for player inputs
+	pthread_t player_1_listen, player_2_listen;
+	pthread_create(&player_1_listen, NULL, &Pong::listenToPlayer1, NULL);
+	pthread_create(&player_2_listen, NULL, &Pong::listenToPlayer2, NULL);
+
 	// Start the game
 	cout << "GAME STARTING IN 3 SECONDS" << endl;
-	Sleep(3000);
+	usleep(3000000);
 	while (!game.isFinished()) {
 		game.update();
 		game.sendPlayer1Packet();
 		game.sendPlayer2Packet();
-		Sleep(100);
+		usleep(1000);
 	}
 
 	cout << "GAME OVER" << endl;
